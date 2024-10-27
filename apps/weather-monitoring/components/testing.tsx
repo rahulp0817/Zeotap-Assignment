@@ -11,7 +11,7 @@ const Home = () => {
           <Subtitle>Track Weather in Mins!</Subtitle>
           <Divider className="border" />
           <Card className="bg-gradient-to-br from-[#394F68] to-[#183B7E] rounded-xl ">
-            <Citypicker />
+            {/* <Citypicker /> */}
           </Card>
         </Card>
       </section>

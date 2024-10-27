@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ruleengine}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ruleenginepass}
+      POSTGRES_DB: ${POSTGRES_DB:-ruleengine}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ruleengine}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Application - Development
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-ruleengine}:${POSTGRES_PASSWORD:-ruleenginepass}@postgres:5432/${POSTGRES_DB:-ruleengine}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Application - Production
+  app-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-ruleengine}:${POSTGRES_PASSWORD:-ruleenginepass}@postgres:5432/${POSTGRES_DB:-ruleengine}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  app:
+    image: node:14  
+    container_name: weather_app
+    working_dir: /usr/src/app
+    volumes:
+      - ./app:/usr/src/app  
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongo:27017/weatherdb  
+    ports:
+      - '3000:3000'  
+    depends_on:
+      - mongo  
+
+  mongo:
+    image: mongo:latest  
+    container_name: mongodb
+    ports:
+      - '27017:27017'  
+    volumes:
+      - mongo_data:/data/db 
+
+volumes:
+  mongo_data:  # Define a volume to store MongoDB data
