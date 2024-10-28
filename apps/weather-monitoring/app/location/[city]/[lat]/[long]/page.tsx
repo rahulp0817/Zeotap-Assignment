@@ -89,7 +89,7 @@ const Home = () => {
     ["repoData", citySelect],
     async () => {
       const { data } = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${citySelect}&appid=${NEXT_API}&cnt=56`
+        `https://api.openweathermap.org/data/2.5/forecast?q=${citySelect}&appid=${NEXT_PUBLIC_API_KEY}&cnt=56`
       );
       return data;
     },
